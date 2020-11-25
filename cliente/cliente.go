@@ -11,7 +11,7 @@ import (
 
 func main() {
 
-		fileToBeChunked := "./bigfile.zip" // change here!
+		fileToBeChunked := "./peter.pdf" // change here!
 
 		file, err := os.Open(fileToBeChunked)
 
@@ -40,7 +40,6 @@ func main() {
 				partBuffer := make([]byte, partSize)
 
 				file.Read(partBuffer)
-
 				// ENVIAR EL CHUNK
 
 		}}
