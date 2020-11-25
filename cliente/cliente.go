@@ -1,45 +1,62 @@
 package main
 
 import (
-		
-		"fmt"
-		
-		"math"
-		"os"
-		
+	"log"
+	"context"
+	"fmt"
+	"math"
+	"os"
+
+	pb "../proto"
+	"google.golang.org/grpc"
 )
 
+
 func main() {
+	log.Printf("= INICIANDO CLIENTE =\n")
 
-		fileToBeChunked := "./peter.pdf" // change here!
+	// Conectar con servidor DataNode
+	ip := "localhost"
+	var conn *grpc.ClientConn
+	host := ip + ":9000"
+	conn, err := grpc.Dial(host, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("did not connect: %s", err)
+	}
 
-		file, err := os.Open(fileToBeChunked)
+	c := pb.NewServicioCentralClient(conn)
 
-		if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-		}
+	_, err = c.Enviar(context.Background(), new(pb.Vacio))
+	if err != nil {
+		log.Fatalf("Error al llamar a Enviar(): %s", err)
+	}
 
-		defer file.Close()
 
-		fileInfo, _ := file.Stat()
+	fileToBeChunked := "./peter.pdf"
 
-		var fileSize int64 = fileInfo.Size()
+	file, err := os.Open(fileToBeChunked)
+	if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+	}
+	defer file.Close()
 
-		const fileChunk = 250 * (1 << 10) // 1 MB, change this to your requirement
+	fileInfo, _ := file.Stat()
 
-		// calculate total number of parts the file will be chunked into
+	var fileSize int64 = fileInfo.Size()
 
-		totalPartsNum := uint64(math.Ceil(float64(fileSize) / float64(fileChunk)))
+	const fileChunk = 250 * (1 << 10) 
 
-		fmt.Printf("Splitting to %d pieces.\n", totalPartsNum)
+	// calculate total number of parts the file will be chunked into
+	totalPartsNum := uint64(math.Ceil(float64(fileSize) / float64(fileChunk)))
 
-		for i := uint64(0); i < totalPartsNum; i++ {
+	fmt.Printf("Splitting to %d pieces.\n", totalPartsNum)
+	for i := uint64(0); i < totalPartsNum; i++ {
+		partSize := int(math.Min(fileChunk, float64(fileSize-int64(i*fileChunk))))
+		partBuffer := make([]byte, partSize)
 
-				partSize := int(math.Min(fileChunk, float64(fileSize-int64(i*fileChunk))))
-				partBuffer := make([]byte, partSize)
-
-				file.Read(partBuffer)
-				// ENVIAR EL CHUNK
-
-		}}
+		file.Read(partBuffer)
+		// ENVIAR EL CHUNK
+	
+	}
+}
