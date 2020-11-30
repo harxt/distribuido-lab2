@@ -11,28 +11,10 @@ import (
 	"google.golang.org/grpc"
 )
 
-
-func main() {
-	log.Printf("= INICIANDO CLIENTE =\n")
-
-	// Conectar con servidor DataNode
-	ip := "localhost"
-	var conn *grpc.ClientConn
-	host := ip + ":9000"
-	conn, err := grpc.Dial(host, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("did not connect: %s", err)
-	}
-
-	c := pb.NewServicioCentralClient(conn)
-
-	_, err = c.Enviar(context.Background(), new(pb.Vacio))
-	if err != nil {
-		log.Fatalf("Error al llamar a Enviar(): %s", err)
-	}
+func dividir(libro) {
 
 
-	fileToBeChunked := "./peter.pdf"
+	fileToBeChunked := libro
 
 	file, err := os.Open(fileToBeChunked)
 	if err != nil {
@@ -56,7 +38,31 @@ func main() {
 		partBuffer := make([]byte, partSize)
 
 		file.Read(partBuffer)
+		fmt.Printf("Archivo Dividido")
 		// ENVIAR EL CHUNK
-	
+	return totalPartsNum
 	}
+}
+
+
+
+func main() {
+	log.Printf("= INICIANDO CLIENTE =\n")
+
+	// Conectar con servidor DataNode
+	ip := "localhost"
+	var conn *grpc.ClientConn
+	host := ip + ":9000"
+	conn, err := grpc.Dial(host, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("did not connect: %s", err)
+	}
+
+	c := pb.NewServicioCentralClient(conn)
+
+	_, err = c.Enviar(context.Background(), new(pb.Vacio))
+	if err != nil {
+		log.Fatalf("Error al llamar a Enviar(): %s", err)
+	}
+
 }
