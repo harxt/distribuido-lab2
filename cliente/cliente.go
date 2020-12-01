@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"context"
 	"fmt"
+	"log"
 	"math"
 	"os"
 
@@ -11,15 +11,14 @@ import (
 	"google.golang.org/grpc"
 )
 
-func dividir(libro) {
-
+func dividir(libro string) uint64 {
 
 	fileToBeChunked := libro
 
 	file, err := os.Open(fileToBeChunked)
 	if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 	defer file.Close()
 
@@ -27,7 +26,7 @@ func dividir(libro) {
 
 	var fileSize int64 = fileInfo.Size()
 
-	const fileChunk = 250 * (1 << 10) 
+	const fileChunk = 250 * (1 << 10)
 
 	// calculate total number of parts the file will be chunked into
 	totalPartsNum := uint64(math.Ceil(float64(fileSize) / float64(fileChunk)))
@@ -40,13 +39,13 @@ func dividir(libro) {
 		file.Read(partBuffer)
 		fmt.Printf("Archivo Dividido")
 		// ENVIAR EL CHUNK
-	return totalPartsNum
 	}
+	return totalPartsNum
+
 }
 
-
-
 func main() {
+
 	log.Printf("= INICIANDO CLIENTE =\n")
 
 	// Conectar con servidor DataNode
