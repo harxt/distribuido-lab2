@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package proto;
-
-message Vacio{}
-
-service ServicioCentral{
-    rpc Enviar(Vacio) returns(Vacio);
-}
