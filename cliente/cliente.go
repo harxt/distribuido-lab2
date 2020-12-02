@@ -2,45 +2,46 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math"
 	"math/rand"
 	"os"
-	"encoding/json"
-	"io/ioutil"
 	"time"
-
+	"strconv"
 	pb "../proto"
 	"google.golang.org/grpc"
+	"bufio"
 )
-
+var err error
 // ESTRUCTURAS
 type NodeInfo struct {
-	Id string `json:"id"`
-	Ip string `json:"ip"`
+	Id   string `json:"id"`
+	Ip   string `json:"ip"`
 	Port string `json:"port"`
 }
 
 type Config struct {
 	DataNode []NodeInfo `json:"DataNode"`
-	NameNode NodeInfo `json:"NameNode"`
+	NameNode NodeInfo   `json:"NameNode"`
 }
 
 // FUNCIONES
 func cargarConfig(file string) Config {
-    var config Config
-    configFile, err := ioutil.ReadFile(file)
-    if err != nil {
+	var config Config
+	configFile, err := ioutil.ReadFile(file)
+	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 	json.Unmarshal(configFile, &config)
-    return config
+	return config
 }
 
-func dividir(libro string) uint64 {
-	fileToBeChunked := libro
+func dividir(path string, nombre string) uint64 {
+	fileToBeChunked := path
 
 	file, err := os.Open(fileToBeChunked)
 	if err != nil {
@@ -64,10 +65,74 @@ func dividir(libro string) uint64 {
 
 		file.Read(partBuffer)
 		fmt.Printf("Archivo Dividido")
+		fileName := nombre + strconv.FormatUint(i, 10)
+		_, err := os.Create(fileName)
+		
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)}
+		ioutil.WriteFile(fileName, partBuffer, os.ModeAppend)
+		fmt.Println("Split to :", fileName)
 		// ENVIAR EL CHUNK
 	}
 	return totalPartsNum
 
+}
+
+func reunir(nombre string, totalPartsNum uint64) {
+	newFileName := nombre
+	_,err = os.Create(newFileName)
+	
+	if err != nil{
+		fmt.Println(err)
+		os.Exit(1)}
+	file, err :=os.OpenFile (newFileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+		}	
+	var writePosition int64 = 0
+	
+	for j := uint64(0) ; j < totalPartsNum; j++ {
+		
+		currentChunkFileName := nombre + strconv.FormatUint(j,10)
+		newFileChunk, err := os.Open(currentChunkFileName)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)}
+		defer newFileChunk.Close()
+		
+		chunkInfo, err := newFileChunk.Stat()
+		
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}	
+		var chunkSize int64 = chunkInfo.Size()
+		chunkBufferBytes := make([]byte, chunkSize)
+		
+		fmt.Println("añadiendo en la posicion : [", writePosition, "] bytes")
+		writePosition = writePosition + chunkSize
+		
+		reader := bufio.NewReader(newFileChunk)
+		_, err =reader.Read(chunkBufferBytes)
+		
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)}
+		n, err := file.Write (chunkBufferBytes)
+		
+		if err != nil{
+			fmt.Println(err)
+			os.Exit(1)}
+		file.Sync()
+		
+		chunkBufferBytes = nil
+		fmt.Println("Escritos ", n, "bytes")
+		fmt.Print("Recombinando la parte ", j, " dentro del archivo", newFileName)
+	}
+	file.Close()
 }
 
 func conectarNodo(ip string, port string) *grpc.ClientConn {
@@ -81,7 +146,6 @@ func conectarNodo(ip string, port string) *grpc.ClientConn {
 	return conn
 }
 
-
 func main() {
 
 	log.Printf("= INICIANDO CLIENTE =\n")
@@ -90,7 +154,7 @@ func main() {
 	log.Printf("Cargando archivo de configuración")
 	config := cargarConfig("config.json")
 	log.Printf("Archivo de configuración cargado")
-	
+
 	// Seleccionar un DataNode de forma aleatoria para conectarse
 	rand.Seed(time.Now().UnixNano())
 	rand_id := rand.Intn(len(config.DataNode))
@@ -98,14 +162,14 @@ func main() {
 	ip := config.DataNode[rand_id].Ip
 	port := config.DataNode[rand_id].Port
 	log.Printf("DataNode seleccionado: " + id)
-	
+
 	// Conectar con servidor DataNode seleccionado
 	conn := conectarNodo(ip, port)
 
 	// Registrar servicio gRPC
 	c := pb.NewServicioNodoClient(conn)
 
-	log.Printf("Conectado al nodo " +  ip + ":" + port)
+	log.Printf("Conectado al nodo " + ip + ":" + port)
 	estado, err := c.ObtenerEstado(context.Background(), new(pb.Vacio))
 	if err != nil {
 		log.Fatalf("Error al llamar a ObtenerEstado(): %s", err)
