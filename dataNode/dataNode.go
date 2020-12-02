@@ -123,13 +123,16 @@ func recorrerGRPC(conexion map[string]pb.ServicioNodoClient) map[string]bool{
 	ret := make(map[string]bool)
 	for Identi, dataNode:= range conexion{
 		estado, err := dataNode.ObtenerEstado(context.Background(), new(pb.Vacio))
+		if err != nil {
+			log.Fatalf("Error al llamar a ObtenerEstado(): %s", err)
+		}
 		if estado.Estado == "OK"{
-		ret[Identi]= true
+			ret[Identi]= true
 		} else {
-			ret[Identi]=false}
-	
+			ret[Identi]=false}	
+	}
+	return ret
 }
-return ret}
 
 func main(){
 	log.Printf("== INICIANDO DATANODE ==")
@@ -169,7 +172,7 @@ func main(){
 				if estado.Estado == "OK" {
 					log.Printf("Almacenando conexión DataNode: " + id)
 					conexionesNodos[id] = conn
-					conexionesGRPC[id] = &c
+					conexionesGRPC[id] = c
 				}
 			}
 		}
