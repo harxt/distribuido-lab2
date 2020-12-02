@@ -8,6 +8,12 @@ message Estado{
     string estado = 1;
 }
 
+message Chunck {
+	bytes content = 1;
+	uint64 parts = 2; 
+}
+
 service ServicioNodo{
     rpc ObtenerEstado(Vacio) returns(Estado);
+    rpc EnviarChunck(Chunck) returns(Estado);
 }

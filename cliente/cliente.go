@@ -23,12 +23,6 @@ type NodeInfo struct {
 	Port string `json:"port"`
 }
 
-type Chunk struct {
-	paquete bytes  `json:"paquete"`
-	nombre string  `json:"nombre"`
-	totalPartsNum uint64  `json:"totalPartsNum"`}
-	
-
 type Config struct {
 	DataNode []NodeInfo `json:"DataNode"`
 	NameNode NodeInfo   `json:"NameNode"`

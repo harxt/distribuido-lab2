@@ -109,18 +109,79 @@ func (x *Estado) GetEstado() string {
 	return ""
 }
 
+type Chunck struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Content []byte `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
+	Parts   uint64 `protobuf:"varint,2,opt,name=parts,proto3" json:"parts,omitempty"`
+}
+
+func (x *Chunck) Reset() {
+	*x = Chunck{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nodo_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Chunck) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Chunck) ProtoMessage() {}
+
+func (x *Chunck) ProtoReflect() protoreflect.Message {
+	mi := &file_nodo_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Chunck.ProtoReflect.Descriptor instead.
+func (*Chunck) Descriptor() ([]byte, []int) {
+	return file_nodo_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Chunck) GetContent() []byte {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+func (x *Chunck) GetParts() uint64 {
+	if x != nil {
+		return x.Parts
+	}
+	return 0
+}
+
 var File_nodo_proto protoreflect.FileDescriptor
 
 var file_nodo_proto_rawDesc = []byte{
 	0x0a, 0x0a, 0x6e, 0x6f, 0x64, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x22, 0x07, 0x0a, 0x05, 0x56, 0x61, 0x63, 0x69, 0x6f, 0x22, 0x20, 0x0a, 0x06,
 	0x45, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x12, 0x16, 0x0a, 0x06, 0x65, 0x73, 0x74, 0x61, 0x64, 0x6f,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x65, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x32, 0x3c,
-	0x0a, 0x0c, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x69, 0x6f, 0x4e, 0x6f, 0x64, 0x6f, 0x12, 0x2c,
-	0x0a, 0x0d, 0x4f, 0x62, 0x74, 0x65, 0x6e, 0x65, 0x72, 0x45, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x12,
-	0x0c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x56, 0x61, 0x63, 0x69, 0x6f, 0x1a, 0x0d, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x45, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x65, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x22, 0x38,
+	0x0a, 0x06, 0x43, 0x68, 0x75, 0x6e, 0x63, 0x6b, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74,
+	0x65, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65,
+	0x6e, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x61, 0x72, 0x74, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x04, 0x52, 0x05, 0x70, 0x61, 0x72, 0x74, 0x73, 0x32, 0x6a, 0x0a, 0x0c, 0x53, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x69, 0x6f, 0x4e, 0x6f, 0x64, 0x6f, 0x12, 0x2c, 0x0a, 0x0d, 0x4f, 0x62, 0x74, 0x65,
+	0x6e, 0x65, 0x72, 0x45, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x12, 0x0c, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x2e, 0x56, 0x61, 0x63, 0x69, 0x6f, 0x1a, 0x0d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e,
+	0x45, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x12, 0x2c, 0x0a, 0x0c, 0x45, 0x6e, 0x76, 0x69, 0x61, 0x72,
+	0x43, 0x68, 0x75, 0x6e, 0x63, 0x6b, 0x12, 0x0d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43,
+	0x68, 0x75, 0x6e, 0x63, 0x6b, 0x1a, 0x0d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x45, 0x73,
+	0x74, 0x61, 0x64, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -135,16 +196,19 @@ func file_nodo_proto_rawDescGZIP() []byte {
 	return file_nodo_proto_rawDescData
 }
 
-var file_nodo_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_nodo_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_nodo_proto_goTypes = []interface{}{
 	(*Vacio)(nil),  // 0: proto.Vacio
 	(*Estado)(nil), // 1: proto.Estado
+	(*Chunck)(nil), // 2: proto.Chunck
 }
 var file_nodo_proto_depIdxs = []int32{
 	0, // 0: proto.ServicioNodo.ObtenerEstado:input_type -> proto.Vacio
-	1, // 1: proto.ServicioNodo.ObtenerEstado:output_type -> proto.Estado
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 1: proto.ServicioNodo.EnviarChunck:input_type -> proto.Chunck
+	1, // 2: proto.ServicioNodo.ObtenerEstado:output_type -> proto.Estado
+	1, // 3: proto.ServicioNodo.EnviarChunck:output_type -> proto.Estado
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -180,6 +244,18 @@ func file_nodo_proto_init() {
 				return nil
 			}
 		}
+		file_nodo_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Chunck); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -187,7 +263,7 @@ func file_nodo_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_nodo_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -214,6 +290,7 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ServicioNodoClient interface {
 	ObtenerEstado(ctx context.Context, in *Vacio, opts ...grpc.CallOption) (*Estado, error)
+	EnviarChunck(ctx context.Context, in *Chunck, opts ...grpc.CallOption) (*Estado, error)
 }
 
 type servicioNodoClient struct {
@@ -233,9 +310,19 @@ func (c *servicioNodoClient) ObtenerEstado(ctx context.Context, in *Vacio, opts 
 	return out, nil
 }
 
+func (c *servicioNodoClient) EnviarChunck(ctx context.Context, in *Chunck, opts ...grpc.CallOption) (*Estado, error) {
+	out := new(Estado)
+	err := c.cc.Invoke(ctx, "/proto.ServicioNodo/EnviarChunck", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ServicioNodoServer is the server API for ServicioNodo service.
 type ServicioNodoServer interface {
 	ObtenerEstado(context.Context, *Vacio) (*Estado, error)
+	EnviarChunck(context.Context, *Chunck) (*Estado, error)
 }
 
 // UnimplementedServicioNodoServer can be embedded to have forward compatible implementations.
@@ -244,6 +331,9 @@ type UnimplementedServicioNodoServer struct {
 
 func (*UnimplementedServicioNodoServer) ObtenerEstado(context.Context, *Vacio) (*Estado, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ObtenerEstado not implemented")
+}
+func (*UnimplementedServicioNodoServer) EnviarChunck(context.Context, *Chunck) (*Estado, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EnviarChunck not implemented")
 }
 
 func RegisterServicioNodoServer(s *grpc.Server, srv ServicioNodoServer) {
@@ -268,6 +358,24 @@ func _ServicioNodo_ObtenerEstado_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ServicioNodo_EnviarChunck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Chunck)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServicioNodoServer).EnviarChunck(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.ServicioNodo/EnviarChunck",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServicioNodoServer).EnviarChunck(ctx, req.(*Chunck))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ServicioNodo_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "proto.ServicioNodo",
 	HandlerType: (*ServicioNodoServer)(nil),
@@ -275,6 +383,10 @@ var _ServicioNodo_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ObtenerEstado",
 			Handler:    _ServicioNodo_ObtenerEstado_Handler,
+		},
+		{
+			MethodName: "EnviarChunck",
+			Handler:    _ServicioNodo_EnviarChunck_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

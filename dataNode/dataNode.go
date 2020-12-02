@@ -27,10 +27,6 @@ type Config struct {
 	NameNode NodeInfo `json:"NameNode"`
 }
 
-type Chunk struct {
-	paquete bytes  `json:"paquete"`
-	nombre string  `json:"nombre"`
-	totalPartsNum uint64  `json:"totalPartsNum"`}
 
 // FUNCIONES
 func cargarConfig(file string) Config {
@@ -117,12 +113,18 @@ func (s *Server) ObtenerEstado(ctx context.Context, message *pb.Vacio) (*pb.Esta
 	return estado, nil
 }
 
+func (s *Server) EnviarChunck(ctx context.Context, message *pb.Chunck) (*pb.Estado, error){
+	estado := new(pb.Estado)
+	estado.Estado = "OK"
+	return estado, nil
+}
 
 func main(){
 	log.Printf("== INICIANDO DATANODE ==")
 
-	// Iniciar variable que mantenga las conexiones establecidas entre nodos
+	// Iniciar variables que mantenga las conexiones establecidas entre nodos
 	conexionesNodos := make(map[string]*grpc.ClientConn)
+	conexionesGRPC := make(map[string]*pb.ServicioNodoClient)
 
 	// Cargar archivo de configuración
 	log.Printf("Cargando archivo de configuración")
@@ -155,6 +157,7 @@ func main(){
 				if estado.Estado == "OK" {
 					log.Printf("Almacenando conexión DataNode: " + id)
 					conexionesNodos[id] = conn
+					conexionesGRPC[id] = &c
 				}
 			}
 		}

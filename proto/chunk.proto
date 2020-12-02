@@ -1,8 +1,0 @@
-syntax ="proto3";
-
-package proto;
-
-message ClienteData {
-	bytes chunk = 1;
-	string nombre =2;
-	uint64 totalPartsNum =3; }
