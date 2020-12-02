@@ -11,9 +11,12 @@ import (
 	"os"
 	"time"
 	"strconv"
+	"bufio"
+	"os/exec"
+	"strings"
+
 	pb "../proto"
 	"google.golang.org/grpc"
-	"bufio"
 )
 var err error
 // ESTRUCTURAS
@@ -40,9 +43,9 @@ func cargarConfig(file string) Config {
 	return config
 }
 
-func dividir(path string, nombre string) uint64 {
+func dividirArchivo(path string) [][]byte {
 	fileToBeChunked := path
-
+	log.Printf("Cargando archivo: " + path)
 	file, err := os.Open(fileToBeChunked)
 	if err != nil {
 		fmt.Println(err)
@@ -57,25 +60,26 @@ func dividir(path string, nombre string) uint64 {
 	const fileChunk = 250 * (1 << 10)
 
 	totalPartsNum := uint64(math.Ceil(float64(fileSize) / float64(fileChunk)))
-
-	fmt.Printf("Splitting to %d pieces.\n", totalPartsNum)
+	chunks := make([][]byte, totalPartsNum)
+	log.Printf("Dividiendo archivo en %d chunks.\n", totalPartsNum)
 	for i := uint64(0); i < totalPartsNum; i++ {
 		partSize := int(math.Min(fileChunk, float64(fileSize-int64(i*fileChunk))))
 		partBuffer := make([]byte, partSize)
 
 		file.Read(partBuffer)
-		fmt.Printf("Archivo Dividido")
-		fileName := nombre + strconv.FormatUint(i, 10)
-		_, err := os.Create(fileName)
+		chunks[i] = partBuffer
+		//fmt.Printf("Archivo Dividido")
+		//fileName := nombre + strconv.FormatUint(i, 10)
+		//_, err := os.Create(fileName)
 		
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)}
-		ioutil.WriteFile(fileName, partBuffer, os.ModeAppend)
-		fmt.Println("Split to :", fileName)
+		//if err != nil {
+		//	fmt.Println(err)
+		//	os.Exit(1)}
+		//ioutil.WriteFile(fileName, partBuffer, os.ModeAppend)
+		//fmt.Println("Split to :", fileName)
 		// ENVIAR EL CHUNK
 	}
-	return totalPartsNum
+	return chunks
 
 }
 
@@ -146,6 +150,22 @@ func conectarNodo(ip string, port string) *grpc.ClientConn {
 	return conn
 }
 
+func clearConsole(){
+	cmd := exec.Command("clear")
+	cmd.Stdout = os.Stdout
+	cmd.Run()
+}
+
+func randomDataNode(config *Config) (string, string, string) {
+	rand.Seed(time.Now().UnixNano())
+	rand_id := rand.Intn(len(config.DataNode))
+	id := config.DataNode[rand_id].Id
+	ip := config.DataNode[rand_id].Ip
+	port := config.DataNode[rand_id].Port
+	return id, ip, port
+}
+
+
 func main() {
 
 	log.Printf("= INICIANDO CLIENTE =\n")
@@ -155,17 +175,49 @@ func main() {
 	config := cargarConfig("config.json")
 	log.Printf("Archivo de configuración cargado")
 
-	// Seleccionar un DataNode de forma aleatoria para conectarse
-	rand.Seed(time.Now().UnixNano())
-	rand_id := rand.Intn(len(config.DataNode))
-	id := config.DataNode[rand_id].Id
-	ip := config.DataNode[rand_id].Ip
-	port := config.DataNode[rand_id].Port
-	log.Printf("DataNode seleccionado: " + id)
+	//Recibir como input la operación a realizar
+	reader := bufio.NewReader(os.Stdin)
+	menuLoop: for {
+		fmt.Print("\n=== MENU ===\n")
+		fmt.Print("0 ] Salir\n")
+		fmt.Print("1 ] Cargar archivo\n")
+		fmt.Print("2 ] Descargar archivo\n")
+		fmt.Print("Ingresar operación a realizar:\n")
+		fmt.Print("=> ")
+		op, _ := reader.ReadString('\n')
+		op = strings.Replace(op, "\n", "", -1)
 
+		switch op{
+		case "0":
+			clearConsole()
+			log.Printf("\n== CERRANDO CLIENTE ==")
+			os.Exit(1)
+		case "1":
+			clearConsole()
+			fmt.Println("Cargar archivo...")
+			fmt.Print("Nombre del archivo a cargar: ")
+			rutafile, _ := reader.ReadString('\n')
+			rutafile = strings.Replace(rutafile, "\n", "", -1)
+	
+			chunks := dividirArchivo(rutafile)
+			log.Printf("Archivo divido")
+			fmt.Printf("Primer chunk[0]: %-v \n", chunks[0][0])
+
+			//Conectar DataNode
+			break menuLoop
+		case "2":
+			clearConsole()
+			fmt.Println("Descargar archivo...")
+			//Conectar Namenode
+			break menuLoop
+		}
+	}
+
+	// Seleccionar un DataNode de forma aleatoria para conectarse
+	id, ip, port := randomDataNode(&config)
+	log.Printf("DataNode seleccionado: " + id)
 	// Conectar con servidor DataNode seleccionado
 	conn := conectarNodo(ip, port)
-
 	// Registrar servicio gRPC
 	c := pb.NewServicioNodoClient(conn)
 
