@@ -119,12 +119,24 @@ func (s *Server) EnviarChunck(ctx context.Context, message *pb.Chunck) (*pb.Esta
 	return estado, nil
 }
 
+func recorrerGRPC(conexion map[string]pb.ServicioNodoClient) map[string]bool{
+	ret := make(map[string]bool)
+	for Identi, dataNode:= range conexion{
+		estado, err := dataNode.ObtenerEstado(context.Background(), new(pb.Vacio))
+		if estado.Estado == "OK"{
+		ret[Identi]= true
+		} else {
+			ret[Identi]=false}
+	
+}
+return ret}
+
 func main(){
 	log.Printf("== INICIANDO DATANODE ==")
 
 	// Iniciar variables que mantenga las conexiones establecidas entre nodos
 	conexionesNodos := make(map[string]*grpc.ClientConn)
-	conexionesGRPC := make(map[string]*pb.ServicioNodoClient)
+	conexionesGRPC := make(map[string]pb.ServicioNodoClient)
 
 	// Cargar archivo de configuración
 	log.Printf("Cargando archivo de configuración")
