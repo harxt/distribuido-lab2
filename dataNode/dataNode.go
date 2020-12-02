@@ -27,6 +27,11 @@ type Config struct {
 	NameNode NodeInfo `json:"NameNode"`
 }
 
+type Chunk struct {
+	paquete bytes  `json:"paquete"`
+	nombre string  `json:"nombre"`
+	totalPartsNum uint64  `json:"totalPartsNum"`}
+
 // FUNCIONES
 func cargarConfig(file string) Config {
     var config Config
