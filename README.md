@@ -25,6 +25,8 @@ make Namenode
 make Cliente 
 ```
 
+4. Al ejecutar el cliente este presenta un menu con las opciones de subir o descargar archivos.
+
 ### PROTOC
 Se debe agregar la ruta donde se encuentra *protoc-gen-go* al PATH
 ```console
