@@ -127,9 +127,9 @@ func recorrerGRPC(conexion map[string]pb.ServicioNodoClient) map[string]bool{
 			log.Fatalf("Error al llamar a ObtenerEstado(): %s", err)
 		}
 		if estado.Estado == "OK"{
-			ret[Identi]= true
+			ret[Identi] = true
 		} else {
-			ret[Identi]=false}	
+			ret[Identi] = false}	
 	}
 	return ret
 }
