@@ -12,17 +12,17 @@ Las máquinas virtuales cuentan con el repositorio, donde debe realizarse toda l
 ## Ejecución
 1. Ejecutar los DataNodes en sus respectivas VM.
 ```console
-make datanode
+make Datanode
 ```
 
 2. Ejecutar el NameNode en sus respectiva VM
 ```console
-make namenode
+make Namenode
 ```
 
 3. Ejecutar el cliente en cualquiera de las VM
 ```console
-make cliente 
+make Cliente 
 ```
 
 ### PROTOC

@@ -1,8 +1,8 @@
-namenode:
+Namenode:
 	go run nameNode/nameNode.go
 
-datanode:
+Datanode:
 	go run dataNode/dataNode.go
 
-cliente:
+Cliente:
 	go run cliente/cliente.go
