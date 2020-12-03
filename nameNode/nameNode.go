@@ -81,6 +81,12 @@ func (s *Server) ObtenerEstado(ctx context.Context, message *pb.Vacio) (*pb.Esta
 	return estado, nil
 }
 
+func (s *Server) EnviarChunck(ctx context.Context, message *pb.Chunck) (*pb.Estado, error){
+	estado := new(pb.Estado)
+	estado.Estado = "OK"
+	return estado, nil
+}
+
 func main() {
 	log.Printf("== INICIANDO NAMENODE ==")
 
